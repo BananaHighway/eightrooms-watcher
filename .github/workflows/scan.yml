@@ -1,0 +1,43 @@
+name: scan naoh tables
+
+# Cron is UTC; SGT = UTC+8. Every 30 min 09:17-23:47 SGT (minutes offset from :00
+# because GitHub delays/drops top-of-hour schedules most). Cancellations likely cluster
+# 2-3 days out (the restaurant charges for changes within 48 h).
+on:
+  schedule:
+    - cron: "17,47 1-15 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Scan and print only (no Telegram, no state change)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write  # to commit state.json (which slots were already alerted)
+
+concurrency:
+  group: scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Scan
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scanner.py ${{ inputs.dry_run && '--dry-run' || '' }}
+      - name: Save state
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "scan-bot"
+          git config user.email "scan-bot@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || (git commit -m "state: update alerted slots" && git push)
