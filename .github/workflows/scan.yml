@@ -1,8 +1,7 @@
-name: scan naoh tables
+name: scan sevenrooms tables
 
 # Cron is UTC; SGT = UTC+8. Every 30 min 09:17-23:47 SGT (minutes offset from :00
-# because GitHub delays/drops top-of-hour schedules most). Cancellations likely cluster
-# 2-3 days out (the restaurant charges for changes within 48 h).
+# because GitHub delays/drops top-of-hour schedules most).
 on:
   schedule:
     - cron: "17,47 1-15 * * *"
@@ -35,7 +34,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scanner.py ${{ inputs.dry_run && '--dry-run' || '' }}
       - name: Save state
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && !cancelled() }}  # save even if one venue failed
         run: |
           git config user.name "scan-bot"
           git config user.email "scan-bot@users.noreply.github.com"
