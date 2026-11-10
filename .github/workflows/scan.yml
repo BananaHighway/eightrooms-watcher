@@ -1,10 +1,9 @@
 name: scan sevenrooms tables
 
-# Cron is UTC; SGT = UTC+8. Every 30 min 09:17-23:47 SGT (minutes offset from :00
-# because GitHub delays/drops top-of-hour schedules most).
+# Triggered by cron-job.org (POST .../actions/workflows/scan.yml/dispatches with
+# inputs.dry_run=false), because GitHub's own cron ran only a few times a day.
+# The schedule (in SGT) now lives in cron-job.org, not here.
 on:
-  schedule:
-    - cron: "17,47 1-15 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
