@@ -1,10 +1,11 @@
 {
-  "_help": "venue = the slug in sevenrooms.com/explore/<venue>/reservations/... . party_sizes: the first is preferred; later sizes are alerted only for times the first has nothing. windows: weekday -> list of HH:MM-HH:MM start-time ranges; weekdays left out are not watched. utc_offset is the venue's local time zone (default 8 = Singapore).",
+  "_help": "venue = the slug in sevenrooms.com/explore/<venue>/reservations/... . party_sizes: the first is preferred; later sizes are alerted only for times the first has nothing. windows: weekday -> list of HH:MM-HH:MM start-time ranges; weekdays left out are not watched. utc_offset is the venue's local time zone (default 8 = Singapore). \"paused\": true skips a venue without deleting its settings.",
   "days_ahead": 35,
   "venues": [
     {
       "venue": "naohrestaurant",
       "name": "Na Oh",
+      "paused": true,
       "party_sizes": [2, 4],
       "windows": {
         "tue": ["19:30-23:59"],

@@ -125,6 +125,9 @@ def main():
 
     for cfg in watch["venues"]:
         venue, name, sizes = cfg["venue"], cfg.get("name", cfg["venue"]), cfg["party_sizes"]
+        if cfg.get("paused"):  # its state is dropped, so resuming alerts on whatever is open then
+            print(f"{name}: paused")
+            continue
         try:
             found = scan_venue(cfg, watch.get("days_ahead", 35), ignore_windows="--all" in sys.argv)
         except Exception as e:  # one broken venue shouldn't stop the others
